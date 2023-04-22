@@ -689,22 +689,27 @@ class RedisAdapter extends socket_io_adapter_1.Adapter {
                 });
                 return numSub;
             });
-            // node-redis
         }
         else if (typeof this.pubClient.pSubscribe === "function") {
+            // node-redis Cluster
             if (Object.getPrototypeOf(Object.getPrototypeOf(this.pubClient)).constructor.name === 'RedisCluster') {
-                const nodes = this.pubClient.masters;
-                return Promise.all(nodes.map((node) => {
-                    node.client.sendCommand(undefined, true, ["pubsub", "numsub", this.requestChannel]);
+                return Promise.all(this.pubClient.masters.map((node, i) => {
+                    return node.client.sendCommand(["pubsub", "numsub", this.requestChannel])
+                        .then((value) => { return parseInt(value[1], 10); })
+                        .catch((err) => {
+                        return 0;
+                    });
                 })).then((values) => {
                     let numSub = 0;
+                    console.log('values!', values);
                     values.map((value) => {
-                        numSub += parseInt(value[1], 10);
+                        numSub += value;
                     });
                     return numSub;
                 });
             }
             else {
+                // node-redis
                 return this.pubClient
                     .sendCommand(["pubsub", "numsub", this.requestChannel])
                     .then((res) => parseInt(res[1], 10));
