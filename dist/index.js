@@ -701,7 +701,6 @@ class RedisAdapter extends socket_io_adapter_1.Adapter {
                     });
                 })).then((values) => {
                     let numSub = 0;
-                    console.log('values!', values);
                     values.map((value) => {
                         numSub += value;
                     });

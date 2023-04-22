@@ -925,7 +925,6 @@ export class RedisAdapter extends Adapter {
             });
         })).then((values) => {
           let numSub = 0;
-          console.log('values!', values)
           values.map((value) => {
             numSub += value
           });
