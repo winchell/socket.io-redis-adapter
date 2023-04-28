@@ -918,6 +918,7 @@ export class RedisAdapter extends Adapter {
       // node-redis Cluster
       if (Object.getPrototypeOf(Object.getPrototypeOf(this.pubClient)).constructor.name === 'RedisCluster') {
         return Promise.all(this.pubClient.masters.map((node, i) => {
+          console.log(this.requestChannel)
           return node.client.sendCommand(["pubsub", "numsub", this.requestChannel])
             .then((value) => { return parseInt(value[1], 10) })
             .catch((err) => {
